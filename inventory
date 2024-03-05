@@ -1,0 +1,88 @@
+#
+# Kubernetes - Control Plane nodes
+#
+# This list is the FQDN/IP of the nodes used for the control plane
+#
+# NOTE: For HA/kube-vip to work you need at least 3 nodes
+#
+[k8s_control_plane]
+k8s-node-01
+k8s-node-02
+k8s-node-03
+
+#
+# Kubernetes - Nodes
+#
+# This list is the FQDN/IP of the nodes used for the generic nodes
+#
+# NOTE: No need to redeclare sasnode03 and sasnode04 even if they will also have other roles
+#
+[k8s_node]
+k8s-node-04
+k8s-node-05
+k8s-node-06
+k8s-node-07
+
+#
+# Kubernetes Nodes - alias - DO NOT MODIFY
+#
+[k8s:children]
+k8s_control_plane
+k8s_node
+
+#
+# Jump Server
+#
+[jump_server]
+10.15.26.201
+
+#
+# Jump Server - alias - DO NOT MODIFY
+#
+[jump:children]
+jump_server
+
+#
+# NFS Server
+#
+[nfs_server]
+10.15.26.213
+#
+# NFS Server - alias - DO NOT MODIFY
+#
+[nfs:children]
+nfs_server
+
+#
+# Postgres Servers
+#
+# NOTE: You MUST have an entry for each postgres server
+
+# NOTE: Add entries here for each postgres server listed above
+#[postgres:children]
+#
+# All systems
+#
+
+[test_k8s_default_pgsql]
+10.15.26.201
+[test_k8s_default_pgsql:vars]
+postgres_server_name="default"
+postgres_server_version="14"
+postgres_server_ssl="on"
+postgres_administrator_login="postgres"
+postgres_administrator_password="admin@sas12345"
+#postgres_server_ssl_cert_file=""
+#postgres_server_ssl_key_file=""
+postgres_system_setting_max_prepared_transactions="1024"
+postgres_system_setting_max_connections="1024"
+
+[postgres:children]
+test_k8s_default_pgsql
+
+[all:children]
+k8s
+jump
+nfs
+postgres
+

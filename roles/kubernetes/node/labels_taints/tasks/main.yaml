@@ -1,0 +1,25 @@
+# Copyright © 2022-2023, SAS Institute Inc., Cary, NC, USA. All Rights Reserved.
+# SPDX-License-Identifier: Apache-2.0
+
+---
+# Apply labels to all kubernetes nodes
+- name: Adding labels to cluster Nodes
+  include_tasks: labels.yaml
+  vars:
+    labels: "{{ item.value }}"
+  with_dict: "{{ node_labels }}"
+  when: ansible_nodename is search(item.key)
+  tags:
+    - install
+    - update
+
+# Apply taints to all kubernetes nodes
+- name: Adding taints to cluster Nodes
+  include_tasks: taints.yaml
+  vars:
+    taints: "{{ item.value }}"
+  with_dict: "{{ node_taints }}"
+  when: ansible_nodename is search(item.key)
+  tags:
+    - install
+    - update
